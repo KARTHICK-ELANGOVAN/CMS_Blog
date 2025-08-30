@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CMS Blog Content Creation</title>
+    <style>
+        body { background-color: #f5f5f5; }
+    </style>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 6px; font-weight: bold; }
+        input[type="text"], textarea, select { width: 100%; padding: 8px; }
+        .color-size-row { display: flex; gap: 20px; flex-wrap: wrap; }
+        .color-size-row > div { flex: 1; min-width: 180px; }
+        button { padding: 10px 20px; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <h2>Create Blog Content</h2>
+    {% if blog_id and blog != "blog not exist" %}
+    <form action="/add_blogContent" method="post" id="blogContentForm">
+         <input type="hidden" name="blog_id" value="{{ blog_id }}">
+        <!--<div class="form-group">
+            <label for="blog_id">Blog ID</label>
+            <h3 class="text" id="blog_id" name="blog_id" value="{{ blog_id }}" readonly>{{ blog_id }}</h3>
+        </div>-->
+        <div class="form-group">
+            <label for="header">Header</label>
+            <input type="text" id="header" name="header" placeholder="Enter blog header" required>
+        </div>
+        <div class="form-group">
+            <label for="text">Content</label>
+            <textarea id="text" name="text" rows="6" placeholder="Enter blog content" required></textarea>
+        </div>
+        <div class="form-group color-size-row">
+            <div>
+            <label for="headerFontStyle">Header Font Style</label>
+            <select id="headerFontStyle" name="header_font_style">
+                <option value="normal" selected>Normal</option>
+                <option value="italic">Italic</option>
+                <option value="oblique">Oblique</option>
+            </select>
+            </div>
+            <div>
+            <label>
+                <input type="checkbox" id="headerBoldFlag" name="header_bold_flag">
+                Header Bold
+            </label>
+            </div>
+            <div>
+            <label for="contentFontStyle">Content Font Style</label>
+            <select id="contentFontStyle" name="contentFontStyle">
+                <option value="normal" selected>Normal</option>
+                <option value="italic">Italic</option>
+                <option value="oblique">Oblique</option>
+            </select>
+            </div>
+            <div>
+            <label>
+                <input type="checkbox" id="contentBoldFlag" name="contentBoldFlag">
+                Content Bold
+            </label>
+            </div>
+        </div>
+        <div class="form-group color-size-row">
+            <div>
+            <label for="headerSize">Header Size</label>
+            <select id="headerSize" name="header_font_size">
+                <option value="18px">Small</option>
+                <option value="24px" selected>Medium</option>
+                <option value="32px">Large</option>
+                <option value="40px">Extra Large</option>
+            </select>
+            </div>
+            <div>
+            <label for="headerColor">Header Color</label>
+            <input type="color" id="headerColor" name="header_font_color_code" value="#333333">
+            </div>
+            <div>
+            <label for="contentSize">Content Size</label>
+            <select id="contentSize" name="content_font_size">
+                <option value="14px">Small</option>
+                <option value="18px" selected>Medium</option>
+                <option value="24px">Large</option>
+                <option value="32px">Extra Large</option>
+            </select>
+            </div>
+            <div>
+            <label for="contentColor">Content Color</label>
+            <input type="color" id="contentColor" name="contentColor" value="#333333">
+            </div>
+        </div>
+        
+        <button type="submit">Create Content</button>
+    </form>
+    {% else %}
+     <p>Blog not found. Cannot add content.</p>
+    {% endif %}
+    <hr>
+    <h3>Preview</h3>
+    <div id="preview" style="border:1px solid #ccc; padding:20px; min-height:100px;"></div>
+
+    <script>
+        const form = document.getElementById('blogContentForm');
+        const preview = document.getElementById('preview');
+
+        function updatePreview() {
+            const header = form.header.value;
+            const text = form.text.value;
+            const headerSize = form.headerSize.value;
+            const headerColor = form.headerColor.value;
+            const contentSize = form.contentSize.value;
+            const contentColor = form.contentColor.value;
+            const headerFontStyle = form.headerFontStyle.value;
+            const headerBoldFlag = form.headerBoldFlag.checked;
+            const contentFontStyle = form.contentFontStyle.value;
+            const contentBoldFlag = form.contentBoldFlag.checked;
+
+            const headerFontWeight = headerBoldFlag ? 'bold' : 'normal';
+            const contentFontWeight = contentBoldFlag ? 'bold' : 'normal';
+
+            preview.innerHTML = `
+            <h1 style="
+                color:${headerColor};
+                font-size:${headerSize};
+                font-style:${headerFontStyle};
+                font-weight:${headerFontWeight};
+                margin-bottom:16px;
+            ">${header}</h1>
+            <div style="
+                color:${contentColor};
+                font-size:${contentSize};
+                font-style:${contentFontStyle};
+                font-weight:${contentFontWeight};
+            ">${text.replace(/\n/g, '<br>')}</div>
+            `;
+        }
+
+        form.addEventListener('input', updatePreview);
+        /***form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Blog content created!');
+        });
+        ***/
+        updatePreview();
+    </script>
+</body>
+</html>
